@@ -1,0 +1,163 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
+
+typedef struct{
+  char nome[50];    
+  int matricula;
+  float nota;
+}aluno;
+
+int busca(int *vet,int val,int tamprova){
+
+  int i;
+  for (i=0;i<tamprova;i++){
+      if (vet[i]==val){
+          return 1;
+      }
+  }
+  return 0;
+}
+
+void imprimearquivo(FILE *pont_arq){
+  char alunos[50];
+
+  pont_arq = fopen("relacao.txt", "r");
+  printf("ALUNOS QUE REALIZARAM A AVALIAÇÃO:\n");
+  printf("------------------------------------");
+  printf("\n");
+  while(fgets(alunos, 50, pont_arq) != NULL){
+    printf("%s", alunos);
+  }
+
+  fclose(pont_arq);
+
+}
+
+void sorteiaquestoes(int tamprova,int tam,int *vet){
+  int igual;
+  int i=0;
+  do{ 
+      vet[i] = rand() % tam; 
+      igual = 0;
+      for(int j = 0; j < i; j++){
+        if(vet[j] == vet[i]){
+          igual = 1; 
+        }          
+      }
+      if(igual == 0){
+        i++;
+      }
+  }while(i < tamprova);
+}
+
+int main() {
+  int tam;
+  printf("Quantas questoes deseja registrar na avaliação?");
+  setbuf(stdin,NULL);
+  scanf("%d",&tam);
+  char questoes[7][tam][100]; 
+  char alter[5][10] = {{"A)"},{"B)"},{"C)"},{"D)"},{"E)"}};
+  aluno aluno;
+  FILE *pont_arq;
+
+  printf("\nRegistre as questoes e as respostas:\n");
+  for (int i=0;i<tam;i++){  
+      printf("\n");
+      printf("%d questao:\n",i+1);
+      setbuf(stdin,NULL);
+      fgets(questoes[0][i],100,stdin);
+      printf("\nInforme as repostas:\n");
+      for (int j=1;j<7;j++){
+          if (j<6){
+              printf("%s",alter[j-1]);
+              setbuf(stdin,NULL);
+              fgets(questoes[j][i],50,stdin);
+          }
+          else{
+              printf("\nInforme a alternativa correta:\n");
+              setbuf(stdin,NULL);
+              fgets(questoes[j][i],10,stdin);
+          }
+      }
+  }
+
+  int tamprova;
+
+  printf("Quantas questões terá a avaliação?");
+  setbuf(stdin,NULL);
+  scanf("%d",&tamprova);
+  float tamprova2=tamprova;
+  float valquest=10/tamprova2;
+  int vet[tamprova];
+  int resposta=1;
+  system("clear");
+  while(resposta==1){
+      sorteiaquestoes(tamprova,tam,vet);
+
+      char resp[10];
+
+      printf("Informe seu nome:");
+      setbuf(stdin,NULL);
+      fgets(aluno.nome,50,stdin);
+      printf("\n");
+      printf("Informe sua matricula:");
+      setbuf(stdin,NULL);
+      scanf("%d",&aluno.matricula);
+      printf("\n");
+      aluno.nota=0;
+      system("clear");
+
+      for(int i=0;i<tamprova;i++){
+          printf("%d ) %s\n",i+1,questoes[0][vet[i]]);
+          for(int j=1;j<6;j++){
+          printf("%s",alter[j-1]);         
+          printf("%s",questoes[j][vet[i]]);
+          }
+          printf("\nResposta:");
+          setbuf(stdin,NULL);
+          fgets(resp,10,stdin);
+          if (resp[0] == questoes[6][vet[i]][0]){
+              aluno.nota=aluno.nota+valquest;
+          }
+          printf("\n");
+      }
+
+      pont_arq=fopen("relacao.txt", "a");
+      
+      fprintf(pont_arq,"Aluno: %sMatricula: %d\nNota: %.2f\n",aluno.nome,aluno.matricula,aluno.nota);
+      if(aluno.nota>7){
+        fprintf(pont_arq,"Aluno aprovado\n");
+      } 
+      else{
+        fprintf(pont_arq,"Aluno reprovado\n");
+      }
+      fprintf(pont_arq,"------------------------------------\n");
+      fclose(pont_arq);
+      
+      printf ("Ha outro aluno para responder a avaliação?\n0-nao\n1-sim\n");
+      setbuf(stdin,NULL);
+      scanf("%d",&resposta);
+      system("clear");
+   }
+  int a;
+
+  printf("\nDeseja ver todos os alunos que realizaram a avaliação?\n0-nao\n1-sim\n");
+  scanf("%d",&a);
+  system("clear");
+
+  if(a == 1){
+    imprimearquivo(pont_arq);
+  }
+  
+  int b;
+
+  printf("\nDeseja apagar a relação de alunos?\n0-nao\n1-sim\n");
+  scanf("%d",&a);
+  system("clear");
+  if(a == 1){
+    remove ("relacao.txt");
+  }  
+  printf("Pronto, apagado.");
+  return(0);
+}
