@@ -53,7 +53,7 @@ void sorteiaquestoes(int tamprova,int tam,int *vet){
 
 int main() {
   int tam;
-  printf("Quantas questoes deseja registrar na avaliação?");
+  printf("Quantas questoes deseja registrar na avaliação? ");
   setbuf(stdin,NULL);
   scanf("%d",&tam);
   char questoes[7][tam][100]; 
@@ -153,9 +153,9 @@ int main() {
   int b;
 
   printf("\nDeseja apagar a relação de alunos?\n0-nao\n1-sim\n");
-  scanf("%d",&a);
+  scanf("%d",&b);
   system("clear");
-  if(a == 1){
+  if(b == 1){
     remove ("relacao.txt");
   }  
   printf("Pronto, apagado.");
